@@ -1,7 +1,7 @@
 // ------------------------------
-// Task 3: Server Sync + Conflict Resolution
+// Task 3: Sync Quotes with Server + Conflict Resolution
 // ------------------------------
-async function fetchQuotesFromServer() {
+async function syncQuotes() {
   try {
     // Fetch server quotes
     const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
@@ -26,7 +26,7 @@ async function fetchQuotesFromServer() {
     // Save updated quotes locally
     localStorage.setItem("quotes", JSON.stringify(quotes));
 
-    // Update categories and show a quote
+    // Update categories and display a quote
     populateCategories();
     showRandomQuote();
 
