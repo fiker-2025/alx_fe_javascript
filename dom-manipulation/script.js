@@ -1,5 +1,5 @@
 // ------------------------------
-// Task 3: Periodic Server Sync + Conflict Resolution
+// Task 3: Periodic Server Sync + Conflict Resolution + Alert
 // ------------------------------
 
 async function fetchQuotesFromServer() {
@@ -36,7 +36,8 @@ async function syncQuotes() {
     populateCategories();
     showRandomQuote();
 
-    // Notify user
+    // Notify user with alert and notification
+    alert("Quotes synced with server!");
     if (conflicts > 0) {
       showNotification(`Synced with server. ${conflicts} conflicts resolved.`, "#28a745");
     } else {
