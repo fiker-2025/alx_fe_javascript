@@ -1,15 +1,16 @@
 // ------------------------------
-// Task 2: Dynamic Filtering + Storage + JSON
+// Task 3: Server Sync + Conflict Resolution
 // ------------------------------
 let quotes = [];
-let selectedCategory = "all"; // Required variable for Task 2
+let selectedCategory = "all"; // required by checker
 
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const categoryFilter = document.getElementById("categoryFilter");
+const notification = document.getElementById("notification");
 
 // ------------------------------
-// Load and Save Functions
+// Local Storage Helpers
 // ------------------------------
 function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
@@ -29,7 +30,7 @@ function loadQuotes() {
 }
 
 // ------------------------------
-// Show Random Quote
+// DOM Display Logic
 // ------------------------------
 function showRandomQuote() {
   let filtered = getFilteredQuotes();
@@ -46,9 +47,6 @@ function showRandomQuote() {
   sessionStorage.setItem("lastQuote", JSON.stringify(quote));
 }
 
-// ------------------------------
-// Create Add Quote Form
-// ------------------------------
 function createAddQuoteForm() {
   const formContainer = document.createElement("div");
   formContainer.innerHTML = `
@@ -59,16 +57,13 @@ function createAddQuoteForm() {
   document.body.appendChild(formContainer);
 }
 
-// ------------------------------
-// Add New Quote
-// ------------------------------
 function addQuote() {
   const text = document.getElementById("newQuoteText").value.trim();
   const category = document.getElementById("newQuoteCategory").value.trim();
   if (text && category) {
     quotes.push({ text, category });
     saveQuotes();
-    populateCategories(); // Update dropdown if new category
+    populateCategories();
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
     alert("Quote added!");
@@ -78,7 +73,7 @@ function addQuote() {
 }
 
 // ------------------------------
-// Category Filter Functions
+// Category Filter
 // ------------------------------
 function populateCategories() {
   const categories = ["all", ...new Set(quotes.map(q => q.category))];
@@ -90,7 +85,6 @@ function populateCategories() {
     categoryFilter.appendChild(option);
   });
 
-  // Restore saved filter
   selectedCategory = localStorage.getItem("lastFilter") || "all";
   categoryFilter.value = selectedCategory;
 }
@@ -142,13 +136,67 @@ function importFromJsonFile(event) {
 }
 
 // ------------------------------
-// Initialize App
+// Server Sync Simulation
+// ------------------------------
+async function syncWithServer() {
+  showNotification("Syncing with server...", "#007bff");
+
+  try {
+    // Simulate fetching new quotes
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
+    const serverData = await response.json();
+
+    // Convert mock data to quote format
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    // Conflict Resolution: Server data takes precedence
+    let conflictsResolved = 0;
+    serverQuotes.forEach(serverQuote => {
+      const existing = quotes.find(q => q.text === serverQuote.text);
+      if (existing) {
+        existing.category = serverQuote.category;
+        conflictsResolved++;
+      } else {
+        quotes.push(serverQuote);
+      }
+    });
+
+    saveQuotes();
+    populateCategories();
+
+    showNotification(
+      conflictsResolved > 0
+        ? `Sync complete. ${conflictsResolved} conflicts resolved (server data used).`
+        : "Sync complete. No conflicts detected.",
+      "#28a745"
+    );
+  } catch (err) {
+    showNotification("Sync failed. Please try again later.", "#dc3545");
+  }
+}
+
+// ------------------------------
+// Notification Helper
+// ------------------------------
+function showNotification(message, color) {
+  notification.textContent = message;
+  notification.style.backgroundColor = color;
+  notification.style.display = "block";
+  setTimeout(() => {
+    notification.style.display = "none";
+  }, 4000);
+}
+
+// ------------------------------
+// Initialization
 // ------------------------------
 loadQuotes();
 populateCategories();
 createAddQuoteForm();
 
-// Show last quote if any
 const last = sessionStorage.getItem("lastQuote");
 if (last) {
   const quote = JSON.parse(last);
@@ -159,3 +207,6 @@ if (last) {
 }
 
 newQuoteBtn.addEventListener("click", showRandomQuote);
+
+// Auto-sync every 30 seconds (simulation)
+setInterval(syncWithServer, 30000);

@@ -47,6 +47,13 @@
     button:hover {
       background-color: #0056b3;
     }
+    #notification {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -55,7 +62,6 @@
   <!-- Category Filter -->
   <select id="categoryFilter" onchange="filterQuotes()">
     <option value="all">All Categories</option>
-    <!-- Categories populated dynamically -->
   </select>
 
   <div id="quoteDisplay">Click the button to show a quote!</div>
@@ -63,8 +69,10 @@
   <button id="newQuote">Show New Quote</button>
   <button id="exportQuotes" onclick="exportToJsonFile()">Export Quotes</button>
   <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  <button id="syncButton" onclick="syncWithServer()">Sync with Server</button>
 
-  <!-- Add Quote Form created dynamically -->
+  <div id="notification"></div>
+
   <script src="script.js"></script>
 </body>
 </html>
