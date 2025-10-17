@@ -2,6 +2,8 @@
 // Task 2: Dynamic Filtering + Storage + JSON
 // ------------------------------
 let quotes = [];
+let selectedCategory = "all"; // Required variable for Task 2
+
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteBtn = document.getElementById("newQuote");
 const categoryFilter = document.getElementById("categoryFilter");
@@ -89,19 +91,18 @@ function populateCategories() {
   });
 
   // Restore saved filter
-  const lastFilter = localStorage.getItem("lastFilter") || "all";
-  categoryFilter.value = lastFilter;
+  selectedCategory = localStorage.getItem("lastFilter") || "all";
+  categoryFilter.value = selectedCategory;
 }
 
 function getFilteredQuotes() {
-  const filter = categoryFilter.value;
-  if (filter === "all") return quotes;
-  return quotes.filter(q => q.category === filter);
+  if (selectedCategory === "all") return quotes;
+  return quotes.filter(q => q.category === selectedCategory);
 }
 
 function filterQuotes() {
-  const selected = categoryFilter.value;
-  localStorage.setItem("lastFilter", selected);
+  selectedCategory = categoryFilter.value;
+  localStorage.setItem("lastFilter", selectedCategory);
   showRandomQuote();
 }
 
