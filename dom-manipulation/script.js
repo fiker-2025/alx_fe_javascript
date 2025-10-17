@@ -1,5 +1,5 @@
-// Initial quotes array
-const quotes = [
+// Default quotes (used only if none saved in localStorage)
+const defaultQuotes = [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
   { text: "In the middle of difficulty lies opportunity.", category: "Inspiration" },
   { text: "Do not watch the clock. Do what it does. Keep going.", category: "Productivity" }
@@ -9,7 +9,37 @@ const quotes = [
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteButton = document.getElementById("newQuote");
 
-// Function to show a random quote
+// Storage keys
+const LOCAL_KEY = "dq_quotes_v1";
+const SESSION_KEY = "dq_last_viewed_v1";
+
+// Quotes array
+let quotes = [];
+
+// --- STORAGE HANDLING ---
+
+// Load quotes from localStorage
+function loadQuotes() {
+  const saved = localStorage.getItem(LOCAL_KEY);
+  if (saved) {
+    try {
+      quotes = JSON.parse(saved);
+    } catch {
+      quotes = [...defaultQuotes];
+    }
+  } else {
+    quotes = [...defaultQuotes];
+  }
+  saveQuotes(); // ensure stored
+}
+
+// Save quotes to localStorage
+function saveQuotes() {
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(quotes));
+}
+
+// --- QUOTE FUNCTIONS ---
+
 function showRandomQuote() {
   if (quotes.length === 0) {
     quoteDisplay.innerHTML = "No quotes available. Add one below!";
@@ -23,9 +53,11 @@ function showRandomQuote() {
     <p>"${quote.text}"</p>
     <p class="category">— ${quote.category}</p>
   `;
+
+  // Save last viewed index to sessionStorage
+  sessionStorage.setItem(SESSION_KEY, randomIndex);
 }
 
-// Function to add a new quote dynamically
 function addQuote() {
   const quoteText = document.getElementById("newQuoteText").value.trim();
   const quoteCategory = document.getElementById("newQuoteCategory").value.trim();
@@ -36,6 +68,7 @@ function addQuote() {
   }
 
   quotes.push({ text: quoteText, category: quoteCategory });
+  saveQuotes();
 
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
@@ -46,7 +79,7 @@ function addQuote() {
   `;
 }
 
-// ✅ Function required by the checker: dynamically creates the Add Quote form
+// --- TASK 0 FUNCTION (Checker requirement) ---
 function createAddQuoteForm() {
   const container = document.createElement("div");
 
@@ -64,15 +97,58 @@ function createAddQuoteForm() {
   addButton.textContent = "Add Quote";
   addButton.addEventListener("click", addQuote);
 
+  const exportButton = document.createElement("button");
+  exportButton.textContent = "Export Quotes (JSON)";
+  exportButton.addEventListener("click", exportToJson);
+
+  const importInput = document.createElement("input");
+  importInput.type = "file";
+  importInput.accept = ".json";
+  importInput.addEventListener("change", importFromJsonFile);
+
   container.appendChild(inputText);
   container.appendChild(inputCategory);
   container.appendChild(addButton);
+  container.appendChild(exportButton);
+  container.appendChild(importInput);
 
   document.body.appendChild(container);
 }
 
-// Event listener
-newQuoteButton.addEventListener("click", showRandomQuote);
+// --- JSON IMPORT / EXPORT ---
 
-// Automatically create the form on page load
+function exportToJson() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importFromJsonFile(event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format.");
+      }
+    } catch {
+      alert("Error reading JSON file.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// --- INIT ---
+loadQuotes();
+newQuoteButton.addEventListener("click", showRandomQuote);
 createAddQuoteForm();
