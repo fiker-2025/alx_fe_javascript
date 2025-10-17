@@ -56,8 +56,11 @@
 
   <button id="newQuote">Show New Quote</button>
 
-  <!-- The add quote form and JSON import/export will be created dynamically by JS -->
+  <!-- Required Export and Import UI for Task 1 -->
+  <button id="exportQuotes" onclick="exportToJsonFile()">Export Quotes</button>
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
+  <!-- The Add Quote Form will be generated dynamically by createAddQuoteForm() -->
   <script src="script.js"></script>
 </body>
 </html>
