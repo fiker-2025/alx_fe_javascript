@@ -1,33 +1,59 @@
-// ✅ Task 3: Simulate fetching quotes from a server and syncing local data
+// ------------------------------
+// Task 3: Server Sync + Conflict Resolution
+// ------------------------------
 async function fetchQuotesFromServer() {
   try {
+    // Fetch server quotes
     const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
     const serverData = await response.json();
 
-    // Simulate server quotes using the placeholder data
-    const serverQuotes = serverData.map(item => ({
-      text: item.title,
+    // Map server data to quote objects
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
       category: "Server"
     }));
 
-    // Simple conflict resolution: server data overrides duplicates
-    const localQuotes = loadQuotes();
-    const updatedQuotes = [
-      ...localQuotes.filter(
-        lq => !serverQuotes.some(sq => sq.text === lq.text)
-      ),
-      ...serverQuotes
-    ];
+    // Conflict resolution: server data overrides duplicates
+    serverQuotes.forEach(sq => {
+      const index = quotes.findIndex(lq => lq.text === sq.text);
+      if (index >= 0) {
+        quotes[index] = sq; // overwrite local
+      } else {
+        quotes.push(sq);
+      }
+    });
 
-    quotes = updatedQuotes;
-    saveQuotes();
+    // Save updated quotes locally
+    localStorage.setItem("quotes", JSON.stringify(quotes));
 
-    // Optional: notify user of sync
-    alert("Quotes synced with server successfully!");
-    showRandomQuote();
+    // Update categories and show a quote
     populateCategories();
+    showRandomQuote();
 
-  } catch (error) {
-    console.error("Error fetching from server:", error);
+    // POST local quotes to server
+    await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(quotes)
+    });
+
+    // Notify user
+    showNotification("Synced with server successfully (GET + POST).", "#28a745");
+
+  } catch (err) {
+    console.error("Server sync failed:", err);
+    showNotification("Server sync failed.", "#dc3545");
   }
+}
+
+// ------------------------------
+// Notification helper
+// ------------------------------
+function showNotification(message, color) {
+  const notification = document.getElementById("notification");
+  if (!notification) return;
+  notification.textContent = message;
+  notification.style.backgroundColor = color;
+  notification.style.display = "block";
+  setTimeout(() => { notification.style.display = "none"; }, 4000);
 }
