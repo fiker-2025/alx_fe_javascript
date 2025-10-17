@@ -32,7 +32,7 @@
       font-size: 0.9rem;
       color: #666;
     }
-    input, button {
+    input, button, select {
       margin: 5px;
       padding: 8px;
       border-radius: 5px;
@@ -52,15 +52,19 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
 
+  <!-- Category Filter -->
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
+    <!-- Categories populated dynamically -->
+  </select>
+
   <div id="quoteDisplay">Click the button to show a quote!</div>
 
   <button id="newQuote">Show New Quote</button>
-
-  <!-- Required Export and Import UI for Task 1 -->
   <button id="exportQuotes" onclick="exportToJsonFile()">Export Quotes</button>
   <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
-  <!-- The Add Quote Form will be generated dynamically by createAddQuoteForm() -->
+  <!-- Add Quote Form created dynamically -->
   <script src="script.js"></script>
 </body>
 </html>
