@@ -1,0 +1,185 @@
+/* ===== Global Styles ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #232526, #414345);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+/* ===== Headings ===== */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #00ffae;
+  letter-spacing: 1px;
+}
+
+h2 {
+  margin-top: 40px;
+  color: #ffd369;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* ===== Quote Display ===== */
+#quoteDisplay {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px;
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: center;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.8s ease;
+}
+
+#quoteDisplay:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(0, 255, 174, 0.3);
+}
+
+.quote-text {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #f8f9fa;
+}
+
+.quote-category {
+  font-size: 1rem;
+  color: #00ffae;
+}
+
+/* ===== Filter Dropdown ===== */
+label {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  color: #ccc;
+}
+
+#categoryFilter {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2c2f33;
+  color: #fff;
+  outline: none;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+#categoryFilter:hover {
+  background-color: #3a3d42;
+}
+
+/* ===== Buttons ===== */
+button {
+  background-color: #00ffae;
+  color: #1b1b1b;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #00e39f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 174, 0.3);
+}
+
+/* ===== Add Quote Form ===== */
+#addQuoteForm {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 90%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+#addQuoteForm input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background-color: #2c2f33;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+#addQuoteForm input:focus {
+  background-color: #3a3d42;
+  box-shadow: 0 0 8px rgba(0, 255, 174, 0.4);
+}
+
+/* ===== Import / Export Section ===== */
+.storage-controls {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.storage-controls input[type="file"] {
+  background-color: #2c2f33;
+  color: #ccc;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  width: 200px;
+}
+
+.storage-controls input[type="file"]::-webkit-file-upload-button {
+  background: #00ffae;
+  color: #1b1b1b;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2rem;
+  }
+  #quoteDisplay {
+    padding: 20px;
+  }
+  #addQuoteForm {
+    padding: 15px;
+  }
+}
